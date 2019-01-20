@@ -1,0 +1,16 @@
+{
+  "name": "geolocation",
+  "version": "1.0.0",
+  "description": "gis cache- distance matrix",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ahuva rosenshtein",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "google-distance-matrix": "^1.1.1",
+    "mssql": "^4.3.0"
+  }
+}

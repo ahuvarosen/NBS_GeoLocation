@@ -1,0 +1,2 @@
+localhost\SQLExpress
+DESKTOP-O9SBDD8\NBS
