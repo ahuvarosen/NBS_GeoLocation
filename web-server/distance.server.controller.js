@@ -2,13 +2,18 @@
 
 var distance = require('google-distance-matrix');
 
+var q= require('q');
+
 const sql = require('mssql');
 
-const config = {
-  user: 'DESKTOP-O9SBDD8/NBS',
-  password: '12345678',
-  server: 'localhost/SQLExpress',
-  database: 'gelocation'}
+var config={   
+host : 'ahuvaf-tp',
+user     : 'sa',
+password : '1234.com',
+database : 'geolocation'
+}
+
+distance.key('AIzaSyCjHqDFEysAJ136tyulCPeNGklwEVHgA08');
 
 module.exports = {
 
@@ -18,18 +23,20 @@ getDistance:function(req,res){
 
   distance = findInDB(req)
 
-  if(!distance))
+  if(!distance)
 
-    var distance = findInGoogle(req)
+  findInGoogle(req).then(result=>{
 
-  res.send(distance)
+    res.send(result)
+  })
 }
-
 }
 
 const findInDB = function (params){
 
-var query = "select distance from distances where origin = '"+params.query.origin +"' and dest = '"+ params.query.dest +"'"
+//var query = "select distance from distances where origin = '"+params.query.origin +"' and dest = '"+ params.query.dest +"'"
+var query = "select * from distances"
+
 sql.connect(config, query, (err,result)=>{
  if(result)
  {
@@ -37,10 +44,15 @@ sql.connect(config, query, (err,result)=>{
    return result;
  }
  return null;
- )
+})
+
+return null;
+ 
 }
 
 const findInGoogle = function (req){
+
+  var promise=q.defer();
 
   var origin = []
 
@@ -50,17 +62,27 @@ const findInGoogle = function (req){
 
   dest.push(req.query.dest);
 
-distance.matrix(origin,dest,function (err, distances) {
+distance.matrix(origin,dest,function (err, result) {
   if (!err){
-      console.log("distance:", distances);
-      putInDB(distances)
+     
+      var dis = result.rows[0].elements[0].distance.value;
+      console.log("dis:", dis);
+      promise.resolve(dis);
+      //putInDB(distances)
     }
 })
-
+return promise.promise;
 }
+var query = "select * from distances"
 
+sql.connect(config, query, (err,result)=>{
+ if(result)
+ {
+   console.log(result)
+   //addCountCalls(params)
+   return result;
+ }
+ return null;
+})
 
-var query = "select distance from distances where origin = 'Tel aviv' and dest = 'Jerusalem'"
-sql.connect(config, query, (eee,ee)=>{console.log(eee)
-  console.log(ee)})
 
